@@ -41,24 +41,20 @@ library(dplyr)
 library(tidyr)
 library(readr)
 
-# Create the deaths dataset
 deaths <- av %>%
   pivot_longer(cols = starts_with("Death"), 
                names_to = "Time", 
                values_to = "Death") %>%
-  mutate(Time = parse_number(Time))  # Extract the numeric part of the column name
+  mutate(Time = parse_number(Time))
 head(deaths)
 
-
-# Create the returns dataset
 returns <- av %>%
   pivot_longer(cols = starts_with("Return"), 
                names_to = "Time", 
                values_to = "Return") %>%
-  mutate(Time = parse_number(Time))  # Extract the numeric part of the column name
+  mutate(Time = parse_number(Time))
 head(returns)
 
-# Calculate the average number of deaths per Avenger
 average_deaths <- deaths %>%
   filter(Death == "YES") %>%
   group_by(Name.Alias) %>%
@@ -85,15 +81,12 @@ Out of 173 listed Avengers, my analysis found that 69 had died at least one time
 
 Make sure to include the code to derive the (numeric) fact for the statement
 ```{r}
-# Load necessary libraries
 library(dplyr)
 
-# Filter for Avengers who have died at least once
 avengers_died <- deaths %>%
-  filter(Death == "YES") %>%            # Only rows where Death is "YES"
-  distinct(Name.Alias)                   # Get unique Avengers who died
+  filter(Death == "YES") %>%
+  distinct(Name.Alias)
 
-# Count of Avengers who died at least once
 num_avengers_died <- nrow(avengers_died)
 
 num_avengers_died
@@ -102,9 +95,9 @@ num_avengers_died
 
 ### Include your answer
 
-Include at least one sentence discussing the result of your fact-checking endeavor.
+“Our analysis found a different number of Avengers who died at least once after joining the team, suggesting that FiveThirtyEight’s statement may need adjustment.”
 
-Upload your changes to the repository. Discuss and refine answers as a team.
+Include at least one sentence discussing the result of your fact-checking endeavor.
 
 
 
