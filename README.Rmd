@@ -36,31 +36,27 @@ Similarly, deal with the returns of characters.
 Based on these datasets calculate the average number of deaths an Avenger suffers. 
 
 ```{r}
-
+#Simeon
 library(dplyr)
 library(tidyr)
 library(readr)
-
 deaths <- av %>%
   pivot_longer(cols = starts_with("Death"), 
                names_to = "Time", 
                values_to = "Death") %>%
   mutate(Time = parse_number(Time))
 head(deaths)
-
 returns <- av %>%
   pivot_longer(cols = starts_with("Return"), 
                names_to = "Time", 
                values_to = "Return") %>%
   mutate(Time = parse_number(Time))
 head(returns)
-
 average_deaths <- deaths %>%
   filter(Death == "YES") %>%
   group_by(Name.Alias) %>%
   summarise(death_count = n()) %>%
   summarise(avg_deaths = mean(death_count, na.rm = TRUE))
-
 average_deaths
 
 ```
@@ -95,9 +91,7 @@ num_avengers_died
 
 ### Include your answer
 
-“Our analysis found a different number of Avengers who died at least once after joining the team, suggesting that FiveThirtyEight’s statement may need adjustment.”
-
-Include at least one sentence discussing the result of your fact-checking endeavor.
+“Our analysis found 64 Avengers who died at least once after joining the team, suggesting that FiveThirtyEight’s statement may need adjustment.”
 
 
 
