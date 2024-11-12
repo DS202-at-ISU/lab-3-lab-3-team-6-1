@@ -4,19 +4,17 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit the README.Rmd file -->
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Lab report #3 - instructions
 
-Follow the instructions posted at https://ds202-at-isu.github.io/labs.html for the lab assignment. The work is meant to be finished during the lab time, but you have time until Monday evening to polish things.
+Follow the instructions posted at <https://ds202-at-isu.github.io/labs.html> for the lab assignment. The work is meant to be finished during the lab time, but you have time until Monday evening to polish things.
 
-Include your answers in this document (Rmd file). Make sure that it knits properly (into the md file). Upload both the Rmd and the md file to your repository.  
+Include your answers in this document (Rmd file). Make sure that it knits properly (into the md file). Upload both the Rmd and the md file to your repository.
 
-All submissions to the github repo will be automatically uploaded for grading once the due date is passed.
-Submit a link to your repository on Canvas (only one submission per team) to signal to the instructors that you are done with your submission.
+All submissions to the github repo will be automatically uploaded for grading once the due date is passed. Submit a link to your repository on Canvas (only one submission per team) to signal to the instructors that you are done with your submission.
 
 # Lab 3: Avenger's Peril
 
@@ -29,11 +27,11 @@ av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/av
 head(av)
 ```
 
-Get the data into a format where the five columns for Death[1-5] are replaced by two columns: Time, and Death. Time should be a number between 1 and 5 (look into the function `parse_number`); Death is a categorical variables with values "yes", "no" and "". Call the resulting data set `deaths`. 
+Get the data into a format where the five columns for Death[1-5] are replaced by two columns: Time, and Death. Time should be a number between 1 and 5 (look into the function `parse_number`); Death is a categorical variables with values "yes", "no" and "". Call the resulting data set `deaths`.
 
 Similarly, deal with the returns of characters.
 
-Based on these datasets calculate the average number of deaths an Avenger suffers. 
+Based on these datasets calculate the average number of deaths an Avenger suffers.
 
 ```{r}
 #Simeon
@@ -61,11 +59,9 @@ average_deaths
 
 ```
 
-
-
 ## Simeon
 
-For each team member, copy this part of the report. 
+For each team member, copy this part of the report.
 
 Each team member picks one of the statements in the FiveThirtyEight [analysis](https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/) and fact checks it based on the data. Use dplyr functionality whenever possible.
 
@@ -76,6 +72,7 @@ Out of 173 listed Avengers, my analysis found that 69 had died at least one time
 ### Include the code
 
 Make sure to include the code to derive the (numeric) fact for the statement
+
 ```{r}
 library(dplyr)
 
@@ -95,7 +92,7 @@ num_avengers_died
 
 ## Adam Grimm
 
-For each team member, copy this part of the report. 
+For each team member, copy this part of the report.
 
 Each team member picks one of the statements in the FiveThirtyEight [analysis](https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/) and fact checks it based on the data. Use dplyr functionality whenever possible.
 
@@ -132,16 +129,96 @@ screen_avenger_deaths
 
 ```
 
+## Bach Nguyen
+
+For each team member, copy this part of the report.
+
+Each team member picks one of the statements in the FiveThirtyEight [analysis](https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/) and fact checks it based on the data. Use dplyr functionality whenever possible.
+
+### FiveThirtyEight Statement
+
+> Of the nine Avengers we see on screen - Iron an, Hulk, Captain America, Thor, Hawkeye, Black Widow, Scarlet Witch, Quicksilver, and The Vision - every single one of them has died at least once in the course of their time Avenging in the comics. In fact, Hawkey died twice!
+
+### Include code
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(tidyr)
+library(readr)
+
+# Load the data
+av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
+
+# Preview the data
+head(av)
+
+```
+
+```{r}
+# Reshape the Death columns into Time and Death
+deaths <- av %>%
+  select(Name.Alias, Death1:Death5) %>%
+  gather(key = "DeathEvent", value = "Death", Death1:Death5) %>%
+  mutate(Time = parse_number(DeathEvent)) %>%
+  select(-DeathEvent)  # Remove the original DeathEvent column
+
+# View the reshaped deaths data
+head(deaths)
+```
+
+```{r}
+# Reshape the Return columns into Time and Return
+returns <- av %>%
+  select(Name.Alias, Return1:Return5) %>%
+  gather(key = "ReturnEvent", value = "Return", Return1:Return5) %>%
+  mutate(Time = parse_number(ReturnEvent)) %>%
+  select(-ReturnEvent)  # Remove the original ReturnEvent column
+
+# View the reshaped returns data
+head(returns)
+
+```
+
+```{r}
+# Calculate the number of deaths per Avenger
+average_deaths <- deaths %>%
+  filter(Death == "YES") %>%  # Ensure that Death values are case-sensitive; change if necessary
+  group_by(Name.Alias) %>%
+  summarise(death_count = n()) %>%
+  summarise(average_death = mean(death_count, na.rm = TRUE))
+
+# Display the average number of deaths
+average_deaths
+
+```
+
+```{r}
+# Check if any Avenger has more than one death
+multiple_deaths <- deaths %>%
+  filter(Death == "YES") %>%
+  group_by(Name.Alias) %>%
+  summarise(death_count = n()) %>%
+  filter(death_count > 1)
+
+# Display Avengers who died more than once
+multiple_deaths
+
+
+```
+
+### FiveThirtyEight Statement
+
+Some Avengers have died multiple times, highlighting the high-risk lives they lead.
+
+
 ### Include your answer
 
-The statement is True! All of the listed Avengers have died at least once, and Hawkeye died twice. 
-
-
-
+The statement is True! All of the listed Avengers have died at least once, and Hawkeye died twice.
 
 ## Individually
 
-For each team member, copy this part of the report. 
+For each team member, copy this part of the report.
 
 Each team member picks one of the statements in the FiveThirtyEight [analysis](https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/) and fact checks it based on the data. Use dplyr functionality whenever possible.
 
