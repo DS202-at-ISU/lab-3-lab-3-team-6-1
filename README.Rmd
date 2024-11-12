@@ -137,76 +137,80 @@ Each team member picks one of the statements in the FiveThirtyEight [analysis](h
 
 ### FiveThirtyEight Statement
 
-> Of the nine Avengers we see on screen - Iron an, Hulk, Captain America, Thor, Hawkeye, Black Widow, Scarlet Witch, Quicksilver, and The Vision - every single one of them has died at least once in the course of their time Avenging in the comics. In fact, Hawkey died twice!
+> I counted 89 total deaths — some unlucky Avengers7 are basically Meat Loaf with an E-ZPass — and on 57 occasions the individual made a comeback.
 
 ### Include code
 
 ```{r}
+library(tidyverse)
 
-library(dplyr)
-library(tidyr)
-library(readr)
 
 av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
 
-head(av)
-
-```
-
-```{r}
 deaths <- av %>%
-  select(Name.Alias, Death1:Death5) %>%
-  gather(key = "DeathEvent", value = "Death", Death1:Death5) %>%
-  mutate(Time = parse_number(DeathEvent)) %>%
-  select(-DeathEvent) 
+  pivot_longer(
+    cols = starts_with("Death"),
+    names_to = "Time",
+    names_prefix = "Death",
+    names_transform = list(Time = parse_number),
+    values_to = "Death"
+  ) %>%
+  mutate(
+    Death = case_when(
+      Death == "YES" ~ "yes",
+      Death == "NO"  ~ "no",
+      TRUE           ~ ""
+    )
+  )
 
-
-head(deaths)
-```
-
-```{r}
 returns <- av %>%
-  select(Name.Alias, Return1:Return5) %>%
-  gather(key = "ReturnEvent", value = "Return", Return1:Return5) %>%
-  mutate(Time = parse_number(ReturnEvent)) %>%
-  select(-ReturnEvent)
+  pivot_longer(
+    cols = starts_with("Return"),
+    names_to = "Time",
+    names_prefix = "Return",
+    names_transform = list(Time = parse_number),
+    values_to = "Return"
+  ) %>%
+  mutate(
+    Return = case_when(
+      Return == "YES" ~ "yes",
+      Return == "NO"  ~ "no",
+      TRUE            ~ ""
+    )
+  )
 
 
-head(returns)
-
-```
-
-```{r}
-average_deaths <- deaths %>%
-  filter(Death == "YES") %>% 
+deaths_summary <- deaths %>%
   group_by(Name.Alias) %>%
-  summarise(death_count = n()) %>%
-  summarise(average_death = mean(death_count, na.rm = TRUE))
+  summarize(Total_Deaths = sum(Death == "yes", na.rm = TRUE))
 
-average_deaths
 
+print(deaths_summary)
+
+
+average_deaths <- mean(deaths_summary$Total_Deaths)
+
+
+cat("On average, an Avenger suffers", round(average_deaths, 2), "deaths.\n")
 ```
 
+
 ```{r}
-multiple_deaths <- deaths %>%
+total_deaths <- av %>%
+  pivot_longer(
+    cols = starts_with("Death"),
+    names_to = "Time",
+    values_to = "Death"
+  ) %>%
   filter(Death == "YES") %>%
-  group_by(Name.Alias) %>%
-  summarise(death_count = n()) %>%
-  filter(death_count > 1)
+  tally(name = "Total_Deaths")
 
-multiple_deaths
-
+print(total_deaths)
 
 ```
-
-### FiveThirtyEight Statement
-
-Some Avengers have died multiple times, highlighting the high-risk lives they lead.
-
-
 ### Include your answer
 
-The statement is True! All of the listed Avengers have died at least once, and Hawkeye died twice.
+The statement from FiveThirtyEight is correct. My answer is the same.
 
 ## Individually
 
