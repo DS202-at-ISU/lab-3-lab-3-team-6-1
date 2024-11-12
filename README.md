@@ -268,15 +268,12 @@ possible.
 ### Include code
 
 ``` r
-# Load necessary libraries
 library(dplyr)
 library(tidyr)
 library(readr)
 
-# Load the data
 av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
 
-# Preview the data
 head(av)
 ```
 
@@ -317,14 +314,13 @@ head(av)
     ## 6                                                                                                                                                                             <NA>
 
 ``` r
-# Reshape the Death columns into Time and Death
 deaths <- av %>%
   select(Name.Alias, Death1:Death5) %>%
   gather(key = "DeathEvent", value = "Death", Death1:Death5) %>%
   mutate(Time = parse_number(DeathEvent)) %>%
-  select(-DeathEvent)  # Remove the original DeathEvent column
+  select(-DeathEvent) 
 
-# View the reshaped deaths data
+
 head(deaths)
 ```
 
@@ -337,14 +333,13 @@ head(deaths)
     ## 6      Richard Milhouse Jones    NO    1
 
 ``` r
-# Reshape the Return columns into Time and Return
 returns <- av %>%
   select(Name.Alias, Return1:Return5) %>%
   gather(key = "ReturnEvent", value = "Return", Return1:Return5) %>%
   mutate(Time = parse_number(ReturnEvent)) %>%
-  select(-ReturnEvent)  # Remove the original ReturnEvent column
+  select(-ReturnEvent)
 
-# View the reshaped returns data
+
 head(returns)
 ```
 
@@ -357,14 +352,12 @@ head(returns)
     ## 6      Richard Milhouse Jones           1
 
 ``` r
-# Calculate the number of deaths per Avenger
 average_deaths <- deaths %>%
-  filter(Death == "YES") %>%  # Ensure that Death values are case-sensitive; change if necessary
+  filter(Death == "YES") %>% 
   group_by(Name.Alias) %>%
   summarise(death_count = n()) %>%
   summarise(average_death = mean(death_count, na.rm = TRUE))
 
-# Display the average number of deaths
 average_deaths
 ```
 
@@ -374,14 +367,12 @@ average_deaths
     ## 1          2.27
 
 ``` r
-# Check if any Avenger has more than one death
 multiple_deaths <- deaths %>%
   filter(Death == "YES") %>%
   group_by(Name.Alias) %>%
   summarise(death_count = n()) %>%
   filter(death_count > 1)
 
-# Display Avengers who died more than once
 multiple_deaths
 ```
 
